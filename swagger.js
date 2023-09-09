@@ -1,24 +1,18 @@
-// swagger.js
+const swaggerAutogen = require("swagger-autogen");
 
-const swaggerJsdoc = require('swagger-jsdoc');
+const  doc  =  { 
+  informações : { 
+    título : 'Minha API' , 
+    descrição : 'Descrição' , 
+  } , 
+  host : 'localhost:4000' , 
+  esquemas : [ 'localhost' ] , 
+} ;
 
-const options = {
-  swaggerDefinition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'LearnMug',
-      version: '1.0.0',
-      description: 'LearnMug Documentation',
-    },
-    servers: [
-      {
-        url: 'http://localhost:4000', // Altere a porta se necessário
-      },
-    ],
-  },
-  apis: ['./routes/*.js'], // Caminho para seus arquivos de rota
-};
+const  outputFile  =  './swagger_output.json' ; 
+const  endpointsFiles  =  [ './src/routes.js' ] ;
 
-const swaggerSpec = swaggerJsdoc(options);
-
-module.exports = swaggerSpec;
+swaggerAutogen ( outputFile ,  endpointsFiles ,  doc ) . then ( ( )  =>  {
+  console.log("Documentação do Swagger gerada encontra-se no arquivo em: "+ outputFile);
+  require ( './index.js' ) ;  // arquivo raiz do seu projeto 
+} ) ;
