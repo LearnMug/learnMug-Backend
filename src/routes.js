@@ -3,6 +3,7 @@ function routes(app) {
     app.use('/users', require('./routes/users.js'));
     app.use('/course-professor', require('./routes/course_professor.js'));
     app.use('/course-students', require('./routes/course_students.js'));
+    app.use('/message-recipient', require('./routes/message_recipient.js'));
     return;
 }
 
