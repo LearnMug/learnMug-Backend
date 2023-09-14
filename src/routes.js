@@ -5,6 +5,7 @@ function routes(app) {
     app.use('/course-students', require('./routes/course_students.js'));
     app.use('/message-recipient', require('./routes/message_recipient.js'));
     app.use('/messages', require('./routes/messages.js'));
+    app.use('/progress-student-module', require('./routes/progress_student_module.js'));
     return;
 }
 
