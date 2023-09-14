@@ -3,11 +3,10 @@ const mysql = require("mysql2");
 const router = express.Router();
 router.use(express.json());
 
-
-router.get('/get-type-user', function (req, res) {
+router.get('/get-calendar-activity', function (req, res) {
   try {
     const connection = mysql.createConnection(process.env.DATABASE_URL)
-    connection.query('SELECT * FROM types_user', (err, results) => {
+    connection.query('SELECT * FROM calendar_activity', (err, results) => {
       if (err) {
         console.error('Erro ao consultar o MySQL:', err);
         res.status(500).json({ error: 'Erro interno do servidor' });
@@ -17,16 +16,16 @@ router.get('/get-type-user', function (req, res) {
     });
     connection.end()
   } catch (error) {
-    console.log(error)
+    return console.error(`Error: ${error}`)
   }
-});
+})
 
-router.get('/get-type-user/:id', function (req, res) {
+router.get('/get-calendar-activity/:id', function (req, res) {
   try {
     const connection = mysql.createConnection(process.env.DATABASE_URL);
     const id = req.params.id
 
-    connection.query("SELECT * FROM types_user WHERE id = ?", [id], (err, results) => {
+    connection.query("SELECT * FROM calendar_activity WHERE id = ?", [id], (err, results) => {
       if (err) {
         console.error("Erro na consulta ao banco de dados:", err);
         return res.status(500).json({ error: "Erro interno do servidor" });
@@ -39,37 +38,39 @@ router.get('/get-type-user/:id', function (req, res) {
   }
 })
 
-router.post("/create-type-user", function (req, res) {
+router.post("/create-calendar-activity", function (req, res) {
 
   const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { description } = req.body;
+  const { responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id } = req.body;
+  const create_at = new Date()
 
   sql =
-    "INSERT INTO types_user ( description ) VALUES (?)";
-  const values = [description];
+    "INSERT INTO calendar_activity ( responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at];
 
   connection.query(sql, values, (err, results) => {
     if (err) {
-      console.error("Erro ao criar type_user no banco de dados:", err);
+      console.error("Erro ao criar calendar_activity no banco de dados:", err);
       return res.status(401).json({ error: err });
     }
 
-    res.json({ cliente_id: results.insertId });
+    res.json({ calendar_activity_id: results.insertId });
   });
 });
 
-router.put("/update-type-user/:id", (req, res) => {
+router.put("/update-calendar-activity/:id", (req, res) => {
 
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
   const updatedFields = req.body;
+  const update_at = new Date()
 
-  const sql = "UPDATE types_user SET ? WHERE id = ?";
-  const values = [updatedFields, id];
+  const sql = "UPDATE calendar_activity SET ?, update_at = ? WHERE id = ?";
+  const values = [updatedFields, update_at, id];
 
   connection.query(sql, values, (err, results) => {
     if (err) {
-      console.error("Erro ao atualizar types_user no banco de dados:", err);
+      console.error("Erro ao atualizar calendar_activity no banco de dados:", err);
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
 
@@ -77,15 +78,15 @@ router.put("/update-type-user/:id", (req, res) => {
   });
 });
 
-router.delete("/delete-type-user/:id", (req, res) => {
+router.delete("/delete-calendar-activity/:id", (req, res) => {
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
 
-  const sql = "DELETE FROM types_user WHERE id = ?";
+  const sql = "DELETE FROM calendar_activity WHERE id = ?";
 
   connection.query(sql, [id], (err, results) => {
     if (err) {
-      console.error("Erro ao excluir types_user do banco de dados:", err);
+      console.error("Erro ao excluir calendar_activity do banco de dados:", err);
       return res.status(500).json({ error: "Erro interno do servidor" });
     }
 
