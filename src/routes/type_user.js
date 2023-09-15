@@ -3,7 +3,7 @@ const connectDB = require("../middleware/connectDB");
 const router = express.Router();
 router.use(express.json());
 
-router.get('/get-type-user', async (req, res) => {
+router.get('/get', async (req, res) => {
   // #swagger.tags = ['Type Users']
   try {
     const connection = await connectDB();
@@ -11,12 +11,12 @@ router.get('/get-type-user', async (req, res) => {
     await connection.end();
     res.json(results);
   } catch (error) {
-    console.error('Erro ao consultar o MySQL:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error('Error in the database query:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.get('/get-type-user/:id', async (req, res) => {
+router.get('/get/:id', async (req, res) => {
   // #swagger.tags = ['Type Users']
   try {
     const connection = await connectDB();
@@ -27,62 +27,63 @@ router.get('/get-type-user/:id', async (req, res) => {
 
     res.json({ data: results });
   } catch (error) {
-    console.error("Erro na consulta ao banco de dados:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.post("/create-type-user", async (req, res) => {
+router.post("/create", async (req, res) => {
   // #swagger.tags = ['Type Users']
-  const connection = await connectDB();
-  const { description } = req.body;
-
-  const sql = "INSERT INTO types_user (description) VALUES (?)";
-  const values = [description];
-
   try {
+    const connection = await connectDB();
+    const { description } = req.body;
+
+    const sql = "INSERT INTO types_user (description) VALUES (?)";
+    const values = [description];
+
     const [results] = await connection.query(sql, values);
     await connection.end();
     res.json({ type_user_id: results.insertId });
   } catch (error) {
-    console.error("Erro ao criar type_user no banco de dados:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error when creating user type in database:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.put("/update-type-user/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   // #swagger.tags = ['Type Users']
-  const connection = await connectDB();
-  const id = req.params.id;
-  const updatedFields = req.body;
-
-  const sql = "UPDATE types_user SET ? WHERE id = ?";
-  const values = [updatedFields, id];
-
   try {
+    const connection = await connectDB();
+    const id = req.params.id;
+    const { description } = req.body;
+    const updatedFields = req.body;
+
+    const sql = "UPDATE types_user SET ? WHERE id = ?";
+    const values = [updatedFields, id];
+
     const [results] = await connection.query(sql, values);
     await connection.end();
     res.json({ data: results });
   } catch (error) {
-    console.error("Erro ao atualizar types_user no banco de dados:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error while updating user type in database:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.delete("/delete-type-user/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   // #swagger.tags = ['Type Users']
-  const connection = await connectDB();
-  const id = req.params.id;
+  try { 
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  const sql = "DELETE FROM types_user WHERE id = ?";
+    const sql = "DELETE FROM types_user WHERE id = ?";
 
-  try {
     const [results] = await connection.query(sql, [id]);
     await connection.end();
     res.json({ data: results });
   } catch (error) {
-    console.error("Erro ao excluir types_user do banco de dados:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error when deleting user type from database:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
