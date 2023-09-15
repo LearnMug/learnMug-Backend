@@ -4,6 +4,7 @@ function routes(app) {
     app.use('/course_modules', require('./routes/courses_modules.js'));
     app.use('/course_categories', require('./routes/course_categories.js'));
     app.use('/categories', require('./routes/categories.js'));
+    app.use('/modules', require('./routes/modules.js'));
     app.use('/users', require('./routes/users.js'));
     return;
 }
