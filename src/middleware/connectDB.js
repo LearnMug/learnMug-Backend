@@ -1,15 +1,19 @@
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
-async function connectDB(req = null, res = null, next = null) {
+async function connectDB() {
   try {
-    await mysql.connect(process.env.DATABASE_URL);
+    const connection = await mysql.createConnection({
+      uri: process.env.DATABASE_URL,
+    });
+
     console.log('Conectado ao banco de dados!');
-    try { next(); } catch { };
-    return mysql;
+    
+    return connection;
   } catch (error) {
     console.error(error);
-    return error;
+    throw error;
   }
 }
+
 
 module.exports = connectDB;

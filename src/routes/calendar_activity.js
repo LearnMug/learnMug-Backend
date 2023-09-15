@@ -4,6 +4,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.get('/get-calendar-activity', function (req, res) {
+  // #swagger.tags = ['Calendar Activity']
   try {
     const connection = mysql.createConnection(process.env.DATABASE_URL)
     connection.query('SELECT * FROM calendar_activity', (err, results) => {
@@ -21,6 +22,7 @@ router.get('/get-calendar-activity', function (req, res) {
 })
 
 router.get('/get-calendar-activity/:id', function (req, res) {
+  // #swagger.tags = ['Calendar Activity']
   try {
     const connection = mysql.createConnection(process.env.DATABASE_URL);
     const id = req.params.id
@@ -39,7 +41,7 @@ router.get('/get-calendar-activity/:id', function (req, res) {
 })
 
 router.post("/create-calendar-activity", function (req, res) {
-
+  // #swagger.tags = ['Calendar Activity']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const { responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id } = req.body;
   const create_at = new Date()
@@ -59,7 +61,7 @@ router.post("/create-calendar-activity", function (req, res) {
 });
 
 router.put("/update-calendar-activity/:id", (req, res) => {
-
+  // #swagger.tags = ['Calendar Activity']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
   const updatedFields = req.body;
@@ -79,6 +81,7 @@ router.put("/update-calendar-activity/:id", (req, res) => {
 });
 
 router.delete("/delete-calendar-activity/:id", (req, res) => {
+  // #swagger.tags = ['Calendar Activity']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
 
