@@ -1,5 +1,4 @@
 function routes(app) {
-    
     app.use('/calendar', require('./routes/calendar_activity.js'));
     app.use('/categories', require('./routes/categories.js'));
     app.use('/classes', require('./routes/classes.js'));

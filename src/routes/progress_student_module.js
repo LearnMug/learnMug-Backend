@@ -1,90 +1,100 @@
 const express = require("express");
-const mysql = require("mysql2");
 const router = express.Router();
+const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
-router.post("/create", function (req, res) {
+router.post("/create", async (req, res) => {
   // #swagger.tags = ['Progress Student Modules']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { student_id, module_id, progress } = req.body;
+  try {
+    const connection = await connectDB();
+    const { student_id, module_id, progress } = req.body;
 
-  sql =
-    "INSERT INTO progress_student_module (student_id, module_id, progress) VALUES (?, ?, ?)";
-  const values = [student_id, module_id, progress];
+    sql =
+      "INSERT INTO progress_student_module (student_id, module_id, progress) VALUES (?, ?, ?)";
+    const values = [student_id, module_id, progress];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao criar progress_student_module no banco de dados:", err);
-      return res.status(401).json({ error: err });
-    }
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-    res.json({ progress_student_module_id: results.insertId });
-  });
+    res.json({ progress_student_module_id: result.insertId });
+  } catch (error) {
+    console.error("Error while creating student progress in module in database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.get("/get-progress-student-module", (req, res) => {
+router.get("/get", async (req, res) => {
   // #swagger.tags = ['Progress Student Modules']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  try {
+    const connection = await connectDB();
 
-  connection.query("SELECT * FROM progress_student_module", (err, results) => {
-    if (err) {
-      console.error("Erro na consulta ao banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-
-    res.json({ data: results });
-  });
+    const [result] = await connection.query(
+      "SELECT * FROM progress_student_module"
+    );
+    await connection.end();
+    
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.get("/get-progress-student-module/:id", (req, res) => {
+router.get("/get/:id", async (req, res) => {
   // #swagger.tags = ['Progress Student Modules']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  connection.query("SELECT * FROM progress_student_module WHERE id = ?", [id], (err, results) => {
-    if (err) {
-      console.error("Erro na consulta ao banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query(
+      "SELECT * FROM progress_student_module WHERE id = ?",
+      [id]
+    );
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.put("/update/:id", (req, res) => {
+router.put("/update/:id", async (req, res) => {
   // #swagger.tags = ['Progress Student Modules']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
-  const updatedFields = req.body;
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
+    const { student_id, module_id, progress } = req.body;
+    const updatedFields = req.body;
 
-  const sql = "UPDATE progress_student_module SET ? WHERE id = ?";
-  const values = [updatedFields, id];
+    const sql = "UPDATE progress_student_module SET ? WHERE id = ?";
+    const values = [updatedFields, id];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao editar progress_student_module no banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error while editing student progress in module in database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.delete("/delete/:id", (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   // #swagger.tags = ['Progress Student Modules']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
+    const sql = "DELETE FROM progress_student_module WHERE id = ?";
 
-  const sql = "DELETE FROM progress_student_module WHERE id = ?";
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
 
-  connection.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao excluir progress_student_module do banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error when deleting student progress in database module:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;

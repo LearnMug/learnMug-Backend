@@ -1,96 +1,100 @@
 const express = require("express");
-const mysql = require("mysql2");
 const router = express.Router();
+const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
-router.get('/get-modules', function (req, res) {
+router.get("/get", async (req, res) => {
+  // #swagger.tags = ['Modules']
   try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL)
-    connection.query('SELECT * FROM modules', (err, results) => {
-      if (err) {
-        console.error('Erro ao consultar o MySQL:', err);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-        return;
-      }
-      res.json(results);
-    });
-    connection.end()
+    const connection = await connectDB();
+
+    const [result] = await connection.query("SELECT * FROM modules");
+    await connection.end();
+
+    res.json(result);
   } catch (error) {
-    return console.error(`Error: ${error}`)
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-})
-
-router.get('/get-modules/:id', function (req, res) {
-  try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL);
-    const id = req.params.id
-
-    connection.query("SELECT * FROM modules WHERE id = ?", [id], (err, results) => {
-      if (err) {
-        console.error("Erro na consulta ao banco de dados:", err);
-        return res.status(500).json({ error: "Erro interno do servidor" });
-      }
-
-      res.json({ data: results });
-    })
-  } catch (error) {
-    return console.error(`Erro: ${error}`)
-  }
-})
-
-router.post("/create-modules", function (req, res) {
-
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { name, description, active_flag, deleted_flag, creating_user_id, updater_user_id } = req.body;
-  const create_at = new Date()
-  sql =
-    "INSERT INTO modules ( name, description, active_flag, deleted_flag, creating_user_id, create_at, updater_user_id  ) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  const values = [name, description, active_flag, deleted_flag, creating_user_id, create_at, updater_user_id];
-
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao criar modules no banco de dados:", err);
-      return res.status(401).json({ error: err });
-    }
-
-    res.json({ modules_id: results.insertId });
-  });
 });
 
-router.put("/update-modules/:id", (req, res) => {
+router.get("/get/:id", async (req, res) => {
+  // #swagger.tags = ['Modules']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
-  const updatedFields = req.body;
-  const update_at = new Date()
+    const [result] = await connection.query(
+      "SELECT * FROM modules WHERE id = ?",
+      [id]
+    );
+    await connection.end();
 
-  const sql = "UPDATE modules SET ?, update_at = ? WHERE id = ?";
-  const values = [updatedFields, update_at, id];
-
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao atualizar modules no banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.delete("/delete-modules/:id", (req, res) => {
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+router.post("/create", async (req, res) => {
+  // #swagger.tags = ['Modules']
+  try {
+    const connection = await connectDB();
+    const {name, description, active_flag, deleted_flag, creating_user_id} = req.body;
+    const create_at = new Date();
+    sql =
+      "INSERT INTO modules ( name, description, active_flag, deleted_flag, creating_user_id, create_at) VALUES (?, ?, ?, ?, ?, ?)";
+    const values = [name, description, active_flag, deleted_flag, creating_user_id, create_at];
 
-  const sql = "DELETE FROM modules WHERE id = ?";
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-  connection.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao excluir modules do banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    res.json({ modules_id: result.insertId });
+  } catch (error) {
+    console.error("Error while creating module in database:", error);
+    return res.status(500).json({ error: error });
+  }
+});
 
-    res.json({ data: results });
-  });
+router.put("/update/:id", async (req, res) => {
+  // #swagger.tags = ['Modules']
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+    const {name, description, active_flag, deleted_flag, creating_user_id} = req.body;
+    const updatedFields = req.body;
+    const update_at = new Date();
+
+    const sql = "UPDATE modules SET ?, update_at = ? WHERE id = ?";
+    const values = [updatedFields, update_at, id];
+
+    const [result] = await connection.query(sql, values);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error while updating module in database:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  // #swagger.tags = ['Modules']
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+
+    const sql = "DELETE FROM modules WHERE id = ?";
+
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
+
+    res.json({ data: result });
+  }catch (error){
+    console.error("Error deleting modules from database:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;
