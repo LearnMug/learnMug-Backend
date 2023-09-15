@@ -4,6 +4,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/create", function (req, res) {
+  // #swagger.tags = ['Courses']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const { name, description, cover_img, ratings, number_of_ratings, course_syllabus, creating_user_id } = req.body;
   const create_at = new Date();
@@ -23,6 +24,7 @@ router.post("/create", function (req, res) {
 });
 
 router.get("/get-courses", (req, res) => {
+  // #swagger.tags = ['Courses']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
 
   connection.query("SELECT * FROM courses", (err, results) => {
@@ -36,6 +38,7 @@ router.get("/get-courses", (req, res) => {
 });
 
 router.get("/get-courses/:id", (req, res) => {
+  // #swagger.tags = ['Courses']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
 
@@ -50,6 +53,7 @@ router.get("/get-courses/:id", (req, res) => {
 });
 
 router.put("/update/:id", (req, res) => {
+  // #swagger.tags = ['Courses']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
   const updatedFields = req.body;
@@ -69,6 +73,7 @@ router.put("/update/:id", (req, res) => {
 });
 
 router.delete("/delete/:id", (req, res) => {
+  // #swagger.tags = ['Courses']
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   const id = req.params.id;
 
