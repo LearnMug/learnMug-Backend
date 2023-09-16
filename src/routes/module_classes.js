@@ -16,7 +16,7 @@ router.get("/get", async (req, res) => {
     console.error("Error in the database query:", err);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+});0
 
 router.get("/get/:id", async (req, res) => {
   // #swagger.tags = ['Module Classes']
