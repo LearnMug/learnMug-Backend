@@ -13,8 +13,8 @@ router.get('/get', async (req, res) => {
     
     res.json({data: result});
   } catch (error) {
-    console.error('Erro ao consultar o MySQL:', error);
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error('Error in the database query:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 })
 
@@ -29,8 +29,8 @@ router.get('/get/:id', async (req, res) => {
     
     res.json({ data: result });
   } catch (error) {
-    console.error("Erro na consulta ao banco de dados:", err);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 })
 
@@ -49,8 +49,8 @@ router.post("/create", async (req, res) => {
 
     res.json({ course_categories_id: result.insertId });
   }catch(error){
-    console.error("Erro ao criar course_categories no banco de dados:", error);
-    res.status(401).json({ error: "Erro interno do servidor" });
+    console.error("Error while creating Course Categories in database:", error);
+    res.status(401).json({ error: "Internal server error" });
   }
 });
 
@@ -70,8 +70,8 @@ router.put("/update/:id", async (req, res) => {
 
     res.json({ data: result });
   }catch(error){
-    console.error("Erro ao atualizar course_categories no banco de dados:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error updating Course Categories in database:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -88,8 +88,8 @@ router.delete("/delete/:id", async (req, res) => {
 
     res.json({ data: result });
   }catch(error){
-    console.error("Erro ao excluir course_categories do banco de dados:", err);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Error deleting course categories from database:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
