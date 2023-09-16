@@ -1,94 +1,96 @@
 const express = require("express");
-const mysql = require("mysql2");
 const router = express.Router();
+const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
-router.get('/get-module-classes', function (req, res) {
+router.get("/get", async (req, res) => {
+  // #swagger.tags = ['Module Classes']
   try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL)
-    connection.query('SELECT * FROM module_classes', (err, results) => {
-      if (err) {
-        console.error('Erro ao consultar o MySQL:', err);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-        return;
-      }
-      res.json(results);
-    });
-    connection.end()
+    const connection = await connectDB();
+
+    const [result] = await connection.query("SELECT * FROM module_classes");
+    await connection.end();
+
+    res.json(result);
   } catch (error) {
-    return console.error(`Error: ${error}`)
+    console.error("Error in the database query:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-})
-
-router.get('/get-module-classes/:id', function (req, res) {
-  try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL);
-    const id = req.params.id
-
-    connection.query("SELECT * FROM module_classes WHERE id = ?", [id], (err, results) => {
-      if (err) {
-        console.error("Erro na consulta ao banco de dados:", err);
-        return res.status(500).json({ error: "Erro interno do servidor" });
-      }
-
-      res.json({ data: results });
-    })
-  } catch (error) {
-    return console.error(`Erro: ${error}`)
-  }
-})
-
-router.post("/create-module-classes", function (req, res) {
-
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { module_id, classe_id } = req.body;
-  sql =
-    "INSERT INTO module_classes ( module_id, classe_id  ) VALUES (?, ?)";
-  const values = [module_id, classe_id];
-
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao criar module_classes no banco de dados:", err);
-      return res.status(401).json({ error: err });
-    }
-
-    res.json({ module_classes_id: results.insertId });
-  });
 });
 
-router.put("/update-module-classes/:id", (req, res) => {
+router.get("/get/:id", async (req, res) => {
+  // #swagger.tags = ['Module Classes']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
-  const updatedFields = req.body;
+    const [result] = await connection.query(
+      "SELECT * FROM module_classes WHERE id = ?",
+      [id]
+    );
+    await connection.end();
 
-  const sql = "UPDATE module_classes SET ? WHERE id = ?";
-  const values = [updatedFields, id];
-
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao atualizar module_classes no banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Erro na consulta ao banco de dados:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.delete("/delete-module-classes/:id", (req, res) => {
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+router.post("/create", async (req, res) => {
+  // #swagger.tags = ['Module Classes']
+  try {
+    const connection = await connectDB();
+    const { module_id, classe_id } = req.body;
+    sql = "INSERT INTO module_classes ( module_id, classe_id  ) VALUES (?, ?)";
+    const values = [module_id, classe_id];
 
-  const sql = "DELETE FROM module_classes WHERE id = ?";
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-  connection.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao excluir module_classes do banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    res.json({ module_classes_id: result.insertId });
+  } catch (error) {
+    console.error("Error while creating module classe in database:", err);
+    return res.status(401).json({ error: err });
+  }
+});
 
-    res.json({ data: results });
-  });
+router.put("/update/:id", async (req, res) => {
+  // #swagger.tags = ['Module Classes']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
+    const { module_id, classe_id } = req.body;
+    const updatedFields = req.body;
+
+    const sql = "UPDATE module_classes SET ? WHERE id = ?";
+    const values = [updatedFields, id];
+
+    const [result] = await connection.query(sql, values);
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error when updating module classe in database:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  // #swagger.tags = ['Module Classes']
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+
+    const sql = "DELETE FROM module_classes WHERE id = ?";
+
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
+
+    res.json({ data: result });
+  }catch (error){
+    console.error("Error deleting module classe from database:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;
