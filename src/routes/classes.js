@@ -4,7 +4,7 @@ const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
 router.get('/get', async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Classes']
   try {
     const connection = await connectDB();
 
@@ -19,7 +19,7 @@ router.get('/get', async (req, res) => {
 })
 
 router.get('/get/:id', async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Classes']
   try {
     const connection = await connectDB();
     const id = req.params.id
@@ -35,7 +35,7 @@ router.get('/get/:id', async (req, res) => {
 })
 
 router.post("/create", async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Classes']
   try{
     const connection = await connectDB();;
     const { name, videos, active_flag, deleted_flag, creating_user_id } = req.body;
@@ -56,7 +56,7 @@ router.post("/create", async (req, res) => {
 });
 
 router.put("/update-classes/:id", async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Classes']
   try{
     const connection = await connectDB();
     const id = req.params.id;
@@ -78,7 +78,7 @@ router.put("/update-classes/:id", async (req, res) => {
 });
 
 router.delete("/delete-classes/:id", async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Classes']
   try{
     const connection = await connectDB();
     const id = req.params.id;
