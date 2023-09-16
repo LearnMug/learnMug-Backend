@@ -1,90 +1,96 @@
 const express = require("express");
-const mysql = require("mysql2");
 const router = express.Router();
+const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
-router.post("/create", function (req, res) {
+router.post("/create", async (req, res) => {
   // #swagger.tags = ['Message Recipient']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { message_id, recipient_id } = req.body;
+  try{
+    const connection = await connectDB();
+    const { message_id, recipient_id } = req.body;
 
-  sql =
-    "INSERT INTO message_recipient (message_id, recipient_id) VALUES (?, ?)";
-  const values = [message_id, recipient_id];
+    sql =
+      "INSERT INTO message_recipient (message_id, recipient_id) VALUES (?, ?)";
+    const values = [message_id, recipient_id];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao criar message_recipient no banco de dados:", err);
-      return res.status(401).json({ error: err });
-    }
-
-    res.json({ message_recipient_id: results.insertId });
-  });
+    const [result] = await connection.query(sql, values);
+    await connection.end();
+    
+    res.json({ message_recipient_id: result.insertId });
+  }catch(error){
+    console.error("Error while creating message recipient in database:", error);
+    res.status(401).json({ error: "Internal server error" });
+  }
 });
 
-router.get("/get-message-recipient", (req, res) => {
+router.get("/get", async (req, res) => {
   // #swagger.tags = ['Message Recipient']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  try{
+    const connection = await connectDB();
 
-  connection.query("SELECT * FROM message_recipient", (err, results) => {
-    if (err) {
-      console.error("Erro na consulta ao banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query("SELECT * FROM message_recipient");
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.get("/get-message-recipient/:id", (req, res) => {
+router.get("/get/:id", async (req, res) => {
   // #swagger.tags = ['Message Recipient']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  connection.query("SELECT * FROM message_recipient WHERE id = ?", [id], (err, results) => {
-    if (err) {
-      console.error("Erro na consulta ao banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query("SELECT * FROM message_recipient WHERE id = ?", [id]);
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.put("/update/:id", (req, res) => {
+router.put("/update/:id", async (req, res) => {
   // #swagger.tags = ['Message Recipient']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
-  const updatedFields = req.body;
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+    const { message_id, recipient_id } = req.body;
+    const updatedFields = req.body;
 
-  const sql = "UPDATE message_recipient SET ? WHERE id = ?";
-  const values = [updatedFields, id];
+    const sql = "UPDATE message_recipient SET ? WHERE id = ?";
+    const values = [updatedFields, id];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao editar message_recipient no banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-
-    res.json({ data: results });
-  });
+    const [result] = await connection.query(sql, values);
+    await connection.end();
+    
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error while editing message recipient in database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.delete("/delete/:id", (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   // #swagger.tags = ['Message Recipient']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  const sql = "DELETE FROM message_recipient WHERE id = ?";
+    const sql = "DELETE FROM message_recipient WHERE id = ?";
 
-  connection.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao excluir message_recipient do banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error deleting message recipient from database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;
