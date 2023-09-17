@@ -1,100 +1,98 @@
 const express = require("express");
-const mysql = require("mysql2");
 const router = express.Router();
+const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 
-router.get('/get-calendar-activity', function (req, res) {
+router.get('/get', async (req, res) => {
   // #swagger.tags = ['Calendar Activity']
   try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL)
-    connection.query('SELECT * FROM calendar_activity', (err, results) => {
-      if (err) {
-        console.error('Erro ao consultar o MySQL:', err);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-        return;
-      }
-      res.json(results);
-    });
-    connection.end()
+    const connection = await connectDB();
+
+    const [result] = await connection.query('SELECT * FROM calendar_activity');
+    await connection.end();
+
+    res.json({ data: result });
   } catch (error) {
-    return console.error(`Error: ${error}`)
+    console.error('Error in the database query:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 })
 
-router.get('/get-calendar-activity/:id', function (req, res) {
+router.get('/get/:id', async (req, res) => {
   // #swagger.tags = ['Calendar Activity']
   try {
-    const connection = mysql.createConnection(process.env.DATABASE_URL);
-    const id = req.params.id
+    const connection = await connectDB();
+    const id = req.params.id;
 
-    connection.query("SELECT * FROM calendar_activity WHERE id = ?", [id], (err, results) => {
-      if (err) {
-        console.error("Erro na consulta ao banco de dados:", err);
-        return res.status(500).json({ error: "Erro interno do servidor" });
-      }
+    const [result] = await connection.query("SELECT * FROM calendar_activity WHERE id = ?", [id]);
+    await connection.end();
 
-      res.json({ data: results });
-    })
+    res.json({ data: result });
   } catch (error) {
-    return console.error(`Erro: ${error}`)
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 })
 
-router.post("/create-calendar-activity", function (req, res) {
+router.post("/create", async (req, res) => {
   // #swagger.tags = ['Calendar Activity']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const { responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id } = req.body;
-  const create_at = new Date()
+  try{
+    const connection = await connectDB();
+    const { responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id } = req.body;
+    const create_at = new Date()
 
-  sql =
-    "INSERT INTO calendar_activity ( responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  const values = [responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at];
+    sql =
+      "INSERT INTO calendar_activity ( responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, creating_user_id, create_at];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao criar calendar_activity no banco de dados:", err);
-      return res.status(401).json({ error: err });
-    }
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-    res.json({ calendar_activity_id: results.insertId });
-  });
+    res.json({ calendar_activity_id: result.insertId });
+  }catch(error){
+    console.error("Error while creating Calendar Activity in database:", error);
+    res.status(401).json({ error: error });
+  }
 });
 
-router.put("/update-calendar-activity/:id", (req, res) => {
+router.put("/update-calendar-activity/:id", async (req, res) => {
   // #swagger.tags = ['Calendar Activity']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
-  const updatedFields = req.body;
-  const update_at = new Date()
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+    const { responsible_id, student_id, module_id, title, description, date, time, link, active_flag, deleted_flag, updater_user_id } = req.body;
+    const updatedFields = req.body;
+    const update_at = new Date()
 
-  const sql = "UPDATE calendar_activity SET ?, update_at = ? WHERE id = ?";
-  const values = [updatedFields, update_at, id];
+    const sql = "UPDATE calendar_activity SET ?, update_at = ? WHERE id = ?";
+    const values = [updatedFields, update_at, id];
 
-  connection.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Erro ao atualizar calendar_activity no banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query(sql, values);
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error updating Calendar Activity in database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-router.delete("/delete-calendar-activity/:id", (req, res) => {
+router.delete("/delete-calendar-activity/:id", async (req, res) => {
   // #swagger.tags = ['Calendar Activity']
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  const id = req.params.id;
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
 
-  const sql = "DELETE FROM calendar_activity WHERE id = ?";
+    const sql = "DELETE FROM calendar_activity WHERE id = ?";
 
-  connection.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Erro ao excluir calendar_activity do banco de dados:", err);
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
 
-    res.json({ data: results });
-  });
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error deleting Calendar Activity from database:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;

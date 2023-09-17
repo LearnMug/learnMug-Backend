@@ -93,4 +93,20 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.get("/all-courses-by-categorie/:id", async (req, res) => {
+  // #swagger.tags = ['Courses Categories']
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+
+    const [result] = await connection.query("SELECT * FROM view_course_categories WHERE categorie_id = ?", [id]);
+    await connection.end();
+    
+    res.status(201).json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
