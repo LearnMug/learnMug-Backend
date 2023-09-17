@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const connectDB = require("../middleware/connectDB");
+const authUser = require("../middleware/authUser");
 router.use(express.json());
 
-router.post("/create", async (req, res) => {
+router.post("/create", authUser, async (req, res) => {
   // #swagger.tags = ['Messages']
   try {
     const connection = await connectDB();
@@ -24,7 +25,7 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.get("/get", async (req, res) => {
+router.get("/get",  async (req, res) => {
   // #swagger.tags = ['Messages']
   try {
     const connection = await connectDB();
