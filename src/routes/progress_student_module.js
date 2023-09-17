@@ -97,4 +97,20 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.get("/progress-student-module", async (req, res) => {
+  // #swagger.tags = ['Progress Student Modules']
+  try{
+    const connection = await connectDB();
+    const { module_id, student_id } = req.body;
+
+    const [result] = await connection.query("SELECT * FROM view_progress_student_module WHERE student_id = ? AND module_id = ?", [student_id, module_id]);
+    await connection.end();
+    
+    res.status(201).json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
