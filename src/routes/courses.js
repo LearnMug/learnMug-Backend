@@ -34,7 +34,7 @@ router.get("/get", async (req, res) => {
 
     res.json({ data: result });
   }catch(error){
-    console.error("Error in the database query:", err);
+    console.error("Error in the database query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
