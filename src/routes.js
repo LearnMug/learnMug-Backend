@@ -7,6 +7,7 @@ function routes(app) {
     app.use('/course-professor', require('./routes/course_professor.js'));
     app.use('/course-students', require('./routes/course_students.js'));
     app.use('/courses', require('./routes/courses.js'));
+    app.use('/login', require('./routes/login.js'));
     app.use('/message-recipient', require('./routes/message_recipient.js'));
     app.use('/messages', require('./routes/messages.js'));
     app.use('/module-classes', require('./routes/module_classes.js'));
