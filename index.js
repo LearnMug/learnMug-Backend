@@ -5,8 +5,9 @@ const swaggerDocument = require('./swagger/swagger_output.json');
 const swaggerOptions = { customCssUrl: '/swagger-ui.css' };
 require('dotenv').config();
 const routes = require('./src/routes');
+const cors = require('cors');
 
-
+app.use(cors());
 app.get('/', (req, res) => {/* #swagger.ignore = true */ res.redirect('/doc'); });
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
 
