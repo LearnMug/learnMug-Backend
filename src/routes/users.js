@@ -7,12 +7,12 @@ router.post("/create", async (req, res) => {
   // #swagger.tags = ['Users']
   try {
     const connection = await connectDB();
-    const { name, email, password, profile_img, type_user_id } = req.body;
+    const { name, email, password, phone_number, profile_img, type_user_id } = req.body;
     const create_at = new Date();
 
     const sql =
-      "INSERT INTO users (name, email, password, profile_img, type_user_id, create_at) VALUES (?, ?, ?, ?, ?, ?)";
-    const values = [name, email, password, profile_img, type_user_id, create_at];
+      "INSERT INTO users (name, email, password, phone_number, profile_img, type_user_id, create_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const values = [name, email, password, phone_number, profile_img, type_user_id, create_at];
 
     const [result] = await connection.query(sql, values);
     await connection.end();
@@ -56,7 +56,7 @@ router.put("/update/:id", async (req, res) => {
   try {
     const connection = await connectDB();
     const id = req.params.id;
-    const { name, email, password, profile_img, type_user_id } = req.body;
+    const { name, email, password, phone_number, profile_img, type_user_id } = req.body;
     const updatedFields = req.body;
     const update_at = new Date();
 

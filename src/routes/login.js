@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
       res.status(200).json({
         status: "OK",
         statusMensagem: "User authenticated with success",
-        resposta: { "x-auth-token": token },
+        resposta: { "token": token },
       });
     } else {
       res.status(401).json({ message: "Invalid user or password" });
