@@ -3,14 +3,28 @@ const swaggerAutogen = require('swagger-autogen')({
   language: 'pt-BR',
 });
 
-const  doc  =  { 
-  informações : { 
-    título : 'Minha API' , 
-    descrição : 'Descrição' , 
-  } , 
-  host : 'localhost:4000' , 
-  esquemas : [ 'localhost' ] , 
-} ;
+let doc = {
+  info: {
+      version: "1.0.0",
+      title: "API LearnMug",
+      description: "Documentação da API LearnMug."
+  },
+  servers:[
+      {
+          url: "http://localhost:4000",
+          description: "Servidor localhost"
+      },
+      {
+          url: "https://learn-mug-backend.vercel.app",
+          description: "Servidor de produção"
+      }
+  ],
+  consumes: ['application/json'],
+  produces: ['aplication/json'],
+  components: {
+      schemas: [ 'localhost' ]
+  }
+};
 
 const  outputFile  =  './swagger_output.json' ; 
 const  endpointsFiles  =  [ './src/routes.js' ] ;
