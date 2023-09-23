@@ -12,8 +12,9 @@ app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions
 
 routes(app);
 
-app.listen(4000, () => {
-  console.log("Servidor rodando");
-});
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+}
 
 module.exports = app;
