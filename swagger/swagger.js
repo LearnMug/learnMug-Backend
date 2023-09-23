@@ -17,5 +17,7 @@ const  endpointsFiles  =  [ './src/routes.js' ] ;
 
 swaggerAutogen ( outputFile ,  endpointsFiles ,  doc ) . then ( ( )  =>  {
   console.log("Documentação do Swagger gerada encontra-se no arquivo em: "+ outputFile);
-  require ( '../index.js' ) ;  // arquivo raiz do seu projeto 
+  if(process.env.NODE_ENV !== 'production'){
+    require ( '../index.js' ) ;  // arquivo raiz do seu projeto 
+  }
 } ) ;
