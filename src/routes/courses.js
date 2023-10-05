@@ -5,7 +5,7 @@ router.use(express.json());
 
 router.post("/create", async (req, res) => {
   // #swagger.tags = ['Courses']
-  try{
+  try {
     const connection = await connectDB();
     const { name, description, cover_img, ratings, number_of_ratings, course_syllabus, creating_user_id } = req.body;
     const create_at = new Date();
@@ -18,7 +18,7 @@ router.post("/create", async (req, res) => {
     await connection.end();
 
     res.json({ course_id: result.insertId });
-  }catch(error){
+  } catch (error) {
     console.error("Error while creating Course in database:", error);
     res.status(401).json({ error: "Internal server error" });
   }
@@ -26,14 +26,14 @@ router.post("/create", async (req, res) => {
 
 router.get("/get", async (req, res) => {
   // #swagger.tags = ['Courses']
-  try{
+  try {
     const connection = await connectDB();
 
     const [result] = await connection.query("SELECT * FROM courses");
     await connection.end();
 
     res.json({ data: result });
-  }catch(error){
+  } catch (error) {
     console.error("Error in the database query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -41,15 +41,15 @@ router.get("/get", async (req, res) => {
 
 router.get("/get/:id", async (req, res) => {
   // #swagger.tags = ['Courses']
-  try{
+  try {
     const connection = await connectDB();
     const id = req.params.id;
 
     const [result] = await connection.query("SELECT * FROM courses WHERE id = ?", [id]);
-    await connection.end();  
+    await connection.end();
 
     res.json({ data: result });
-  }catch(error){
+  } catch (error) {
     console.error("Error in the database query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -57,7 +57,7 @@ router.get("/get/:id", async (req, res) => {
 
 router.put("/update/:id", async (req, res) => {
   // #swagger.tags = ['Courses']
-  try{
+  try {
     const connection = await connectDB();
     const id = req.params.id;
     const { name, description, cover_img, ratings, number_of_ratings, course_syllabus, creating_user_id } = req.body;
@@ -69,9 +69,9 @@ router.put("/update/:id", async (req, res) => {
 
     const [result] = await connection.query(sql, values);
     await connection.end();
-    
+
     res.json({ data: result });
-  }catch(error){
+  } catch (error) {
     console.error("Error while editing Course in database:", error);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -79,7 +79,7 @@ router.put("/update/:id", async (req, res) => {
 
 router.delete("/delete/:id", async (req, res) => {
   // #swagger.tags = ['Courses']
-  try{
+  try {
     const connection = await connectDB();
     const id = req.params.id;
 
@@ -89,8 +89,23 @@ router.delete("/delete/:id", async (req, res) => {
     connection.end();
 
     res.json({ data: result });
-  }catch(error){
+  } catch (error) {
     console.error("Error deleting Course from database:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/getBestSellers", async (req, res) => {
+  // #swagger.tags = ['Courses']
+  try {
+    const connection = await connectDB();
+
+    const [result] = await connection.query(`SELECT course_id, cover_img, course_name FROM view_course_students GROUP BY course_id, cover_img, course_name ORDER BY COUNT(student_id) DESC LIMIT 5`);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
