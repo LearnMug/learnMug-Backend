@@ -110,4 +110,22 @@ router.get("/getBestSellers", async (req, res) => {
   }
 });
 
+router.get("/getRatings/:id", async (req, res) => {
+  // #swagger.tags = ['Courses']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id
+
+    const [result] = await connection.query(`SELECT * FROM view_course_categories WHERE categorie_id = ?
+    ORDER BY ratings, number_of_ratings DESC
+    LIMIT 5;`, [id]);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
