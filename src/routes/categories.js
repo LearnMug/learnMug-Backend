@@ -94,4 +94,21 @@ router.delete("/delete-categories/:id", async (req, res) => {
   }
 });
 
+router.get("/getMainCategories", async (req, res) => {
+  // #swagger.tags = ['Categories']
+  try {
+    const connection = await connectDB();
+
+    const [result] = await connection.query(`SELECT * FROM view_course_categories
+    ORDER BY ratings, number_of_ratings DESC
+    LIMIT 5;`);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
