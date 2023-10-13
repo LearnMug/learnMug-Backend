@@ -99,9 +99,7 @@ router.get("/getMainCategories", async (req, res) => {
   try {
     const connection = await connectDB();
 
-    const [result] = await connection.query(`SELECT * FROM view_course_categories
-    ORDER BY ratings, number_of_ratings DESC
-    LIMIT 5;`);
+    const [result] = await connection.query(`SELECT DISTINCTROW categorie_id, categorie_name, categorie_image FROM view_course_categories LIMIT 5;`);
     await connection.end();
 
     res.json({ data: result });
