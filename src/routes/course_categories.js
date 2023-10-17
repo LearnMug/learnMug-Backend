@@ -93,7 +93,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.get("/all-courses-by-categorie/:id", async (req, res) => {
+router.get("/all-courses-by-category/:id", async (req, res) => {
   // #swagger.tags = ['Courses Categories']
   try{
     const connection = await connectDB();
