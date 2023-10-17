@@ -109,4 +109,21 @@ router.get("/getMainCategories", async (req, res) => {
   }
 });
 
+router.get("/getBestSellersByCategorie/:id", async (req, res) => {
+  // #swagger.tags = ['Categories']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
+    const sql = "SELECT course_id, cover_img, course_name FROM view_course_student_categories WHERE categorie_id = ? GROUP BY course_id, cover_img, course_name ORDER BY COUNT(student_id) DESC LIMIT 5"
+
+    const [result] = await connection.query(sql, [id]);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
