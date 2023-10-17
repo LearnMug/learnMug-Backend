@@ -109,7 +109,7 @@ router.get("/getMainCategories", async (req, res) => {
   }
 });
 
-router.get("/getBestSellersByCategorie/:id", async (req, res) => {
+router.get("/getBestSellersByCategory/:id", async (req, res) => {
   // #swagger.tags = ['Categories']
   try {
     const connection = await connectDB();
