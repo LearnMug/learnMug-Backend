@@ -102,7 +102,7 @@ router.get("/all-courses-of-student/:id", async (req, res) => {
     const [result] = await connection.query("SELECT * FROM view_course_students WHERE student_id = ?", [id]);
     await connection.end();
     
-    res.status(201).json({ data: result });
+    res.status(200).json({ data: result });
   }catch(error){
     console.error("Error in the database query:", error);
     res.status(500).json({ error: "Internal server error" });
