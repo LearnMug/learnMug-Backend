@@ -100,7 +100,11 @@ router.get("/getBestSellers", async (req, res) => {
   try {
     const connection = await connectDB();
 
-    const [result] = await connection.query(`SELECT course_id, cover_img, course_name FROM view_course_students GROUP BY course_id, cover_img, course_name ORDER BY COUNT(student_id) DESC LIMIT 5`);
+    const [result] = await connection.query(`SELECT cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, 
+    COUNT(cs.student_id) AS student_count, cp.user_name FROM view_course_students cs 
+    LEFT JOIN view_course_professor cp ON cp.course_id = cs.course_id 
+    GROUP BY cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, cp.user_name 
+    ORDER BY student_count DESC LIMIT 5;`);
     await connection.end();
 
     res.json({ data: result });
