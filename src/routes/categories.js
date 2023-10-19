@@ -114,8 +114,14 @@ router.get("/getBestSellersByCategory/:id", async (req, res) => {
   try {
     const connection = await connectDB();
     const id = req.params.id;
-    const sql = "SELECT course_id, cover_img, course_name FROM view_course_student_categories WHERE categorie_id = ? GROUP BY course_id, cover_img, course_name ORDER BY COUNT(student_id) DESC LIMIT 5"
+    //const sql = "SELECT course_id, cover_img, course_name FROM view_course_student_categories WHERE categorie_id = ? GROUP BY course_id, cover_img, course_name ORDER BY COUNT(student_id) DESC LIMIT 5"
 
+    const sql = `SELECT cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, 
+    COUNT(cs.student_id) AS student_count, cp.user_name FROM view_course_student_categories cs 
+    LEFT JOIN view_course_professor cp ON cp.course_id = cs.course_id 
+    WHERE cs.categorie_id = ?
+    GROUP BY cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, cp.user_name 
+    ORDER BY student_count DESC LIMIT 5;`;
     const [result] = await connection.query(sql, [id]);
     await connection.end();
 
