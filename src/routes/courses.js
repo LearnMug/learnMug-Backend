@@ -170,14 +170,27 @@ router.get("/getAllByCategories/:id", async (req, res) => {
 router.get("/getDetailCourse/:id", async (req, res) =>{
    // #swagger.tags = ['Courses']
    try {
+      const classeArr = [];
       const connection = await connectDB();
       const id = req.params.id
 
-      const [result] = await connection.query(`SELECT * FROM view_course_details WHERE course_id = ?
-      ORDER BY classe_name;`, [id]);
+      const [course] = await connection.query(`SELECT name course_name, description course_description, pricing, cover_img course_image,
+      ratings, number_of_ratings, course_syllabus
+      FROM courses WHERE id = ?`, [id]);
+      
+      const [professor] = await connection.query(`SELECT user_name professor_name, email professor_email, profile_img professor_image 
+      FROM view_course_professor WHERE course_id = ?`, [id]);
+
+      const [modules] = await connection.query(`SELECT module_id, module_name, module_description FROM view_course_modules WHERE course_id = ?`, [id]);
+
+      for(let i=0; i<modules.length; i++){
+        const [classes] = await connection.query(`SELECT classe_id, classe_name, classe_description, videos FROM view_module_classes WHERE module_id = ?`, [modules[i].module_id]);
+        classeArr.push(classes);
+      }
+      
       await connection.end();
 
-      res.json({ data: result });
+      res.json({ course: course,  professor: professor, modules: modules, classes: classeArr});
     } catch (error) {
       console.error("Error in the database query:", error);
       res.status(500).json({ error: "Internal server error" });
