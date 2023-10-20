@@ -38,12 +38,12 @@ router.post("/create", async (req, res) => {
   // #swagger.tags = ['Classes']
   try{
     const connection = await connectDB();;
-    const { name, videos, active_flag, deleted_flag, creating_user_id } = req.body;
+    const { name, description, videos, active_flag, deleted_flag, creating_user_id } = req.body;
     const create_at = new Date()
 
     sql =
-      "INSERT INTO classes ( name, videos, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?)";
-    const values = [name, videos, active_flag, deleted_flag, creating_user_id, create_at];
+      "INSERT INTO classes ( name, description, videos, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const values = [name, description, videos, active_flag, deleted_flag, creating_user_id, create_at];
 
     const [result] = await connection.query(sql, values);
     await connection.end();
@@ -60,7 +60,7 @@ router.put("/update-classes/:id", async (req, res) => {
   try{
     const connection = await connectDB();
     const id = req.params.id;
-    const { name, videos, active_flag, deleted_flag, updater_user_id } = req.body;
+    const { name, description videos, active_flag, deleted_flag, updater_user_id } = req.body;
     const updatedFields = req.body;
     const update_at = new Date()
 
