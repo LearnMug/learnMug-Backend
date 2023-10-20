@@ -60,7 +60,7 @@ router.put("/update-classes/:id", async (req, res) => {
   try{
     const connection = await connectDB();
     const id = req.params.id;
-    const { name, description videos, active_flag, deleted_flag, updater_user_id } = req.body;
+    const { name, description, videos, active_flag, deleted_flag, updater_user_id } = req.body;
     const updatedFields = req.body;
     const update_at = new Date()
 
