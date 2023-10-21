@@ -190,7 +190,7 @@ router.get("/getDetailCourse/:id", async (req, res) =>{
       
       await connection.end();
 
-      res.json({ course: course,  professor: professor, modules: modules, classes: classeArr});
+      res.json({data: { course: course,  professor: professor, modules: modules, classes: classeArr}});
     } catch (error) {
       console.error("Error in the database query:", error);
       res.status(500).json({ error: "Internal server error" });
