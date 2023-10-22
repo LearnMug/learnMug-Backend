@@ -4,7 +4,7 @@ const connectDB = require("../middleware/connectDB");
 router.use(express.json());
 const axios = require('axios');
 
-const BASE_URL = "https://learn-mug-backend.vercel.app/search"
+const BASE_URL = "https://learn-mug-backend.vercel.app/search";
 
 router.post("/", async (req, res) => {
   // #swagger.tags = ['Search']
