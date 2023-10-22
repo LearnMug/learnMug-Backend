@@ -14,6 +14,7 @@ function routes(app) {
     app.use('/modules', require('./routes/modules.js'));
     app.use('/progress-student-module', require('./routes/progress_student_module.js'));
     app.use('/search', require('./routes/search.js'));
+    app.use('/send-mail', require('./routes/send_mail.js'));
     app.use('/type', require('./routes/type_user.js'));
     app.use('/users', require('./routes/users.js'));
     return;
