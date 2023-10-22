@@ -9,14 +9,25 @@ router.post("/create", async (req, res) => {
     const connection = await connectDB();
     const { course_id, student_id, progress } = req.body;
 
-    sql =
-      "INSERT INTO course_students (course_id, student_id, progress) VALUES (?, ?, ?)";
-    const values = [course_id, student_id, progress];
+    const [ course_student ] =  await connection.query("SELECT * FROM view_course_students WHERE student_id = ? AND course_id = ?", [student_id, course_id]);
 
-    const [result] = await connection.query(sql, values);
+    if(course_student.length == 0){
+      sql =
+      "INSERT INTO course_students (course_id, student_id, progress) VALUES (?, ?, ?)";
+      const values = [course_id, student_id, progress];
+
+      const [result] = await connection.query(sql, values);
+
+      await connection.end();
+
+      res.json({ course_students_id: result.insertId });
+    }
+
     await connection.end();
 
-    res.json({ course_students_id: result.insertId });
+    const msg = "Esse curso já existe para esse estudante";
+
+    res.json({ msg: msg });
   }catch(error){
     console.error("Error while creating Course Students in database:", error);
     res.status(401).json({ error: "Internal server error" });
