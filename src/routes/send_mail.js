@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
     from: 'learnmug.payment@gmail.com',
     to: destinatario,
     subject: assunto,
-    text: corpo,
+    html: corpo,
   };
 
   try {
