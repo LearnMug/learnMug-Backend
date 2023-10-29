@@ -174,7 +174,7 @@ router.get("/getDetailCourse/:id", async (req, res) =>{
       const connection = await connectDB();
       const id = req.params.id
 
-      const [course] = await connection.query(`SELECT name course_name, description course_description, pricing, cover_img course_image,
+      const [course] = await connection.query(`SELECT id course_id, name course_name, description course_description, pricing, cover_img course_image,
       ratings, number_of_ratings, course_syllabus
       FROM courses WHERE id = ?`, [id]);
       
