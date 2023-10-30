@@ -10,7 +10,7 @@ let newFileName = ""; // Defina newFileName no escopo mais amplo
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, "src/uploads/");
   },
   filename: (req, file, cb) => {
     // Gere um novo nome de arquivo com base em UUID
