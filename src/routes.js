@@ -16,6 +16,7 @@ function routes(app) {
     app.use('/search', require('./routes/search.js'));
     app.use('/send-mail', require('./routes/send_mail.js'));
     app.use('/type', require('./routes/type_user.js'));
+    app.use('/upload', require('./routes/upload.js'));
     app.use('/users', require('./routes/users.js'));
     return;
 }
