@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use("/uploads", express.static("uploads"));
+app.use("/src/uploads", express.static("src/uploads"));
 
 
 if (process.env.NODE_ENV !== 'test') {
