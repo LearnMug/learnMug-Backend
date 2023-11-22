@@ -90,4 +90,23 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.put("/update-preferences/:id", async (req, res) => {
+  // #swagger.tags = ['Users']
+
+  const connection = await connectDB();
+  const id = req.params.id;
+
+  const { preferences } = req.body;
+  const updatedFields = req.body;
+  const update_at = new Date();
+
+  const sql = "UPDATE users SET ? , update_at = ? WHERE id = ?";
+  const values = [updatedFields, update_at, id];
+
+  const [result] = await connection.query(sql, values);
+  await connection.end();
+
+  res.json({ data: result });
+});
+
 module.exports = router;
