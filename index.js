@@ -7,16 +7,10 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerOptions = { customCssUrl: '/swagger-ui.css' };
 const routes = require('./src/routes');
-const corsOptions = {
-  origin: 'https://learn-mug-frontend.vercel.app',
-  methods: 'GET,PUT,POST,DELETE',
-  allowedHeaders: 'Content-Type,Authorization',
-};
-
 require('dotenv').config();
 
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
