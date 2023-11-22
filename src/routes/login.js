@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
       res.status(200).json({
         status: "OK",
         statusMensagem: "User authenticated with success",
-        resposta: { "token": token, "user_id": result[0].id , "name":result[0].name, "email": result[0].email, "phone_number": result[0].phone_number, "profile_img": result[0].profile_img },
+        resposta: { "token": token, "user_id": result[0].id , "name":result[0].name, "email": result[0].email, "phone_number": result[0].phone_number, "profile_img": result[0].profile_img, "preferences": result[0].preferences},
       });
     } else {
       res.status(401).json({ message: "Invalid user or password" });
