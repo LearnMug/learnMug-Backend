@@ -98,4 +98,23 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.get("/professors_of_student/:id", async (req, res) => {
+  // #swagger.tags = ['Messages']
+  try {
+    const connection = await connectDB();
+    const id = req.params.id;
+
+    const [result] = await connection.query(
+      "SELECT * FROM view_professors_of_student WHERE student_id = ?",
+      [id]
+    );
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
