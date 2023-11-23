@@ -109,4 +109,20 @@ router.get("/all-message-of-user/:id", async (req, res) => {
   }
 });
 
+router.get("/message-of-user/:id", async (req, res) => {
+  // #swagger.tags = ['Message Recipient']
+  try{
+    const connection = await connectDB();
+    const id = req.params.id;
+
+    const [result] = await connection.query("SELECT * FROM view_messages_user WHERE message_id = ?", [id]);
+    await connection.end();
+
+    res.json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
