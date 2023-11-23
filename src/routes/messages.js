@@ -4,8 +4,8 @@ const connectDB = require("../middleware/connectDB");
 const axios = require("axios");
 router.use(express.json());
 
-const BASE_URL = "http://localhost:4000/messages";
-const BASE_URL_USER = "http://localhost:4000/message-recipient";
+const BASE_URL = "https://learn-mug-backend.vercel.app/messages/";
+const BASE_URL_USER = "https://learn-mug-backend.vercel.app/message-recipient";
 
 router.post("/send-message", async (req, res) => {
   // #swagger.tags = ['Messages']
