@@ -12,6 +12,7 @@ function routes(app) {
     app.use('/messages', require('./routes/messages.js'));
     app.use('/module-classes', require('./routes/module_classes.js'));
     app.use('/modules', require('./routes/modules.js'));
+    app.use('/posts', require('./routes/posts.js'));
     app.use('/progress-student-module', require('./routes/progress_student_module.js'));
     app.use('/search', require('./routes/search.js'));
     app.use('/send-mail', require('./routes/send_mail.js'));
