@@ -114,6 +114,30 @@ router.get("/getBestSellers", async (req, res) => {
   }
 });
 
+router.post("/getBestSellersById", async (req, res) => {
+  // #swagger.tags = ['Courses']
+  try {
+    const connection = await connectDB();
+    const { ids } = req.body;
+
+    const sql = `SELECT cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, cc.categorie_id,
+    COUNT(cs.student_id) AS student_count, cp.user_name FROM view_course_students cs 
+    LEFT JOIN view_course_professor cp ON cp.course_id = cs.course_id
+    LEFT JOIN view_course_categories cc ON cp.course_id = cc.course_id
+    WHERE cc.categorie_id IN (?)
+    GROUP BY cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, cp.user_name, cc.categorie_id
+    ORDER BY student_count DESC LIMIT 5`;
+
+    const [result] = await connection.query(sql, [ids]);
+    await connection.end();
+
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/getRatings/:id", async (req, res) => {
   // #swagger.tags = ['Courses']
   try {
