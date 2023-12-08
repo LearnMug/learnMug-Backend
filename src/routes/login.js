@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     const { email, password } = req.body;
 
     const [result] = await connection.query(
-      "SELECT * FROM users WHERE email = ? AND password = ?",
+      "SELECT name, email, phone_number, preferences FROM users WHERE email = ? AND password = ?",
       [email, password]
     );
     await connection.end();
