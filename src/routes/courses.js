@@ -124,11 +124,12 @@ router.post("/getBestSellersById", async (req, res) => {
     COUNT(cs.student_id) AS student_count, cp.user_name FROM view_course_students cs 
     LEFT JOIN view_course_professor cp ON cp.course_id = cs.course_id
     LEFT JOIN view_course_categories cc ON cp.course_id = cc.course_id
-    WHERE cc.categorie_id IN (?)
+    WHERE cc.categorie_id IN (${ids})
     GROUP BY cs.course_id, cs.cover_img, cs.course_name, cs.ratings, cs.number_of_ratings, cs.pricing, cp.user_name, cc.categorie_id
     ORDER BY student_count DESC LIMIT 5`;
 
-    const [result] = await connection.query(sql, [ids]);
+    const [result] = await connection.query(sql);
+    
     await connection.end();
 
     res.json({ data: result });
