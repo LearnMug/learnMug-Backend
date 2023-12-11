@@ -99,7 +99,7 @@ router.get("/all-message-of-user/:id", async (req, res) => {
     const connection = await connectDB();
     const id = req.params.id;
 
-    const [result] = await connection.query("SELECT * FROM view_messages_user WHERE recipient_id = ?", [id]);
+    const [result] = await connection.query("SELECT * FROM view_messages_user WHERE recipient_id = ? ORDER BY create_at DESC", [id]);
     await connection.end();
 
     res.json({ data: result });
