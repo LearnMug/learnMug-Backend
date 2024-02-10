@@ -120,4 +120,19 @@ router.get("/all-courses-of-student/:id", async (req, res) => {
   }
 });
 
+router.get("/all-student-of-course", async (req, res) => {
+  // #swagger.tags = ['Course Students']
+  try{
+    const connection = await connectDB();
+
+    const [result] = await connection.query("SELECT  name, course_name, email, progress FROM view_course_students");
+    await connection.end();
+    
+    res.status(200).json({ data: result });
+  }catch(error){
+    console.error("Error in the database query:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
