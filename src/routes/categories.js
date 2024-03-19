@@ -38,11 +38,11 @@ router.post("/create", async (req, res) => {
   // #swagger.tags = ['Categories']
   try{
     const connection = await connectDB();
-    const { name, active_flag, deleted_flag, creating_user_id } = req.body;
+    const { name, image, active_flag, deleted_flag, creating_user_id } = req.body;
     const create_at = new Date()
     sql =
-      "INSERT INTO categories ( name, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?)";
-    const values = [name, active_flag, deleted_flag, creating_user_id, create_at];
+      "INSERT INTO categories ( name, image, active_flag, deleted_flag, creating_user_id, create_at ) VALUES (?, ?, ?, ?, ?, ?)";
+    const values = [name, image, active_flag, deleted_flag, creating_user_id, create_at];
 
     const [result] = await connection.query(sql, values);
     connection.end();
@@ -59,7 +59,7 @@ router.put("/update-categories/:id", async (req, res) => {
   try{
     const connection = await connectDB();
     const id = req.params.id;
-    const { name, active_flag, deleted_flag, updater_user_id } = req.body;
+    const { name, image, active_flag, deleted_flag, updater_user_id } = req.body;
     const updatedFields = req.body;
     const update_at = new Date()
 
@@ -98,8 +98,7 @@ router.get("/getMainCategories", async (req, res) => {
   // #swagger.tags = ['Categories']
   try {
     const connection = await connectDB();
-
-    const [result] = await connection.query(`SELECT DISTINCTROW categorie_id, categorie_name, categorie_image FROM view_course_categories LIMIT 5;`);
+    const [result] = await connection.query(`SELECT * FROM view_categories LIMIT 9 ORDER BY name;`);
     await connection.end();
 
     res.json({ data: result });
